@@ -1,0 +1,49 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - run: cd test-rust-function
+    
+    - name: The Determinate Nix Installer
+      # You may pin to the exact commit or the version.
+      # uses: DeterminateSystems/nix-installer-action@de22e16c4711fca50c816cc9081563429d1cf563
+      uses: DeterminateSystems/nix-installer-action@v10
+          
+    - name: Magic Nix Cache
+      # You may pin to the exact commit or the version.
+      # uses: DeterminateSystems/magic-nix-cache-action@fc6aaceb40b9845a02b91e059ec147e78d1b4e41
+      uses: DeterminateSystems/magic-nix-cache-action@v4
+
+    # Rust project
+    - name: Run tests
+      run: nix develop --impure . -c cargo test --verbose
+    - name: Build
+      run: nix develop --impure . -c cargo lambda build --release --arm64 --verbose
+      
+    - name: Configure AWS Credentials
+      # You may pin to the exact commit or the version.
+      # uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        # AWS Region, e.g. us-east-2
+        aws-region: us-east-2
+        # AWS Access Key ID. Provide this key if you want to assume a role using access keys rather than a web identity token.
+        aws-access-key-id: "Secret Key Id"
+        # AWS Secret Access Key. Required if aws-access-key-id is provided.
+        aws-secret-access-key: "Secret access key"
+    - name: Deploy
+      run: nix develop --impure . -c cargo lambda deploy --iam-role arn:aws:iam::533267231400:role/lambda_deployer

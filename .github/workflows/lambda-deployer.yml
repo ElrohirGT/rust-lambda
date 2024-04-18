@@ -29,11 +29,13 @@ jobs:
 
     # Rust project
     - name: Run tests
-      run: cd test-rust-function
-      run: nix develop --impure .. -c cargo test --verbose
+      run: | 
+        cd test-rust-function &&\
+          nix develop --impure .. -c cargo test --verbose
     - name: Build
-      run: cd test-rust-function
-      run: nix develop --impure .. -c cargo lambda build --release --arm64 --verbose
+      run: | 
+        cd test-rust-function &&\
+          nix develop --impure .. -c cargo lambda build --release --arm64 --verbose
       
     - name: Configure AWS Credentials
       # You may pin to the exact commit or the version.
@@ -47,5 +49,6 @@ jobs:
         # AWS Secret Access Key. Required if aws-access-key-id is provided.
         aws-secret-access-key: "Secret access key"
     - name: Deploy
-      run: cd test-rust-function
-      run: nix develop --impure .. -c cargo lambda deploy --iam-role arn:aws:iam::533267231400:role/lambda_deployer
+      run: |
+        cd test-rust-function &&\
+          nix develop --impure .. -c cargo lambda deploy --iam-role arn:aws:iam::533267231400:role/lambda_deployer

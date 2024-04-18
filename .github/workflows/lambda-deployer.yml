@@ -45,9 +45,9 @@ jobs:
         # AWS Region, e.g. us-east-2
         aws-region: us-east-2
         # AWS Access Key ID. Provide this key if you want to assume a role using access keys rather than a web identity token.
-        aws-access-key-id: ${secrets.AWS_ACCESS_KEY_ID}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         # AWS Secret Access Key. Required if aws-access-key-id is provided.
-        aws-secret-access-key: ${secrets.AWS_ACCESS_KEY}
+        aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY }}
     - name: Deploy
       run: |
         cd test-rust-function &&\
